@@ -1,68 +1,96 @@
-// ==============================
-// PORTFOLIO SCRIPT - PART 3A
-// ==============================
+/* ==========================================
+   PORTFOLIO V3
+   script.js
+   Part 3A
+========================================== */
 
-// Active Navbar While Scrolling
+// ===============================
+// Mobile Menu
+// ===============================
+
+const menuIcon = document.querySelector("#menu-icon");
+const navbar = document.querySelector(".navbar");
+
+menuIcon.onclick = () => {
+
+    menuIcon.classList.toggle("bx-x");
+
+    navbar.classList.toggle("active");
+
+};
+
+// ===============================
+// Close Menu on Click
+// ===============================
+
+document.querySelectorAll(".navbar a").forEach(link => {
+
+    link.onclick = () => {
+
+        menuIcon.classList.remove("bx-x");
+
+        navbar.classList.remove("active");
+
+    }
+
+});
+
+// ===============================
+// Sticky Header
+// ===============================
+
+const header = document.querySelector(".header");
+
+window.addEventListener("scroll", () => {
+
+    header.classList.toggle("sticky", window.scrollY > 100);
+
+});
+
+// ===============================
+// Active Navbar Link
+// ===============================
 
 const sections = document.querySelectorAll("section");
 const navLinks = document.querySelectorAll(".navbar a");
 
-window.addEventListener("scroll", () => {
+window.onscroll = () => {
 
-    let current = "";
+    let top = window.scrollY;
 
-    sections.forEach(section => {
+    sections.forEach(sec => {
 
-        const sectionTop = section.offsetTop - 150;
-        const sectionHeight = section.offsetHeight;
+        let offset = sec.offsetTop - 150;
 
-        if (pageYOffset >= sectionTop) {
-            current = section.getAttribute("id");
+        let height = sec.offsetHeight;
+
+        let id = sec.getAttribute("id");
+
+        if (top >= offset && top < offset + height) {
+
+            navLinks.forEach(link => {
+
+                link.classList.remove("active");
+
+            });
+
+            document
+                .querySelector(".navbar a[href*=" + id + "]")
+                .classList.add("active");
+
         }
 
     });
 
-    navLinks.forEach(link => {
+};
 
-        link.classList.remove("active");
+// ===============================
+// Scroll Animation
+// ===============================
 
-        if (link.getAttribute("href") === "#" + current) {
-            link.classList.add("active");
-        }
+const hiddenElements = document.querySelectorAll(".fade-up");
 
-    });
-
-});
-
-
-// ==============================
-// Smooth Button Animation
-// ==============================
-
-const buttons = document.querySelectorAll(".btn");
-
-buttons.forEach(button => {
-
-    button.addEventListener("mouseenter", () => {
-
-        button.style.transform = "translateY(-5px)";
-
-    });
-
-    button.addEventListener("mouseleave", () => {
-
-        button.style.transform = "translateY(0px)";
-
-    });
-
-});
-
-
-// ==============================
-// Fade In Animation
-// ==============================
-
-const observer = new IntersectionObserver((entries) => {
+const observer = new IntersectionObserver(entries => {
 
     entries.forEach(entry => {
 
@@ -74,59 +102,26 @@ const observer = new IntersectionObserver((entries) => {
 
     });
 
-}, {
-    threshold: 0.2
 });
 
-document.querySelectorAll("section").forEach(sec => {
+hiddenElements.forEach(el => observer.observe(el));
+/* ==========================================
+   PORTFOLIO V3
+   script.js
+   Part 3B
+========================================== */
 
-    sec.classList.add("hidden");
-
-    observer.observe(sec);
-
-});
-// ==============================
-// PORTFOLIO SCRIPT - PART 3B
-// ==============================
-
-
-// Navbar Shadow on Scroll
-
-const header = document.querySelector(".header");
-
-window.addEventListener("scroll", () => {
-
-    if (window.scrollY > 50) {
-
-        header.style.boxShadow = "0 10px 30px rgba(0,0,0,.35)";
-
-    } else {
-
-        header.style.boxShadow = "none";
-
-    }
-
-});
-
-
-// ==============================
+// ===============================
 // Scroll To Top Button
-// ==============================
+// ===============================
 
-const topBtn = document.createElement("button");
-
-topBtn.innerHTML = "↑";
-
-topBtn.className = "top-btn";
-
-document.body.appendChild(topBtn);
-
+const topBtn = document.querySelector(".top-btn");
 
 window.addEventListener("scroll", () => {
 
-    if (window.scrollY > 400) {
+    if (window.scrollY > 500) {
 
-        topBtn.style.display = "block";
+        topBtn.style.display = "flex";
 
     } else {
 
@@ -135,7 +130,6 @@ window.addEventListener("scroll", () => {
     }
 
 });
-
 
 topBtn.addEventListener("click", () => {
 
@@ -149,123 +143,213 @@ topBtn.addEventListener("click", () => {
 
 });
 
+// ===============================
+// Typing Effect
+// ===============================
 
-// ==============================
-// Simple Typing Effect
-// ==============================
+const typingElement = document.querySelector(".typing-text");
 
-const typingText = document.querySelector(".home-content h2");
-
-const roles = [
+const words = [
 
     "Full Stack Developer",
 
+    "Frontend Developer",
+
     "Python Developer",
 
-    "Web Designer",
-
-    "CSE Student"
+    "Problem Solver"
 
 ];
 
-let roleIndex = 0;
+let wordIndex = 0;
+let charIndex = 0;
+let deleting = false;
 
-setInterval(() => {
+function typeEffect() {
 
-    roleIndex++;
+    const currentWord = words[wordIndex];
 
-    if (roleIndex >= roles.length) {
+    if (!deleting) {
 
-        roleIndex = 0;
+        typingElement.textContent =
+            currentWord.substring(0, charIndex++);
+
+        if (charIndex > currentWord.length) {
+
+            deleting = true;
+
+            setTimeout(typeEffect, 1200);
+
+            return;
+
+        }
+
+    } else {
+
+        typingElement.textContent =
+            currentWord.substring(0, charIndex--);
+
+        if (charIndex < 0) {
+
+            deleting = false;
+
+            wordIndex++;
+
+            if (wordIndex >= words.length) {
+
+                wordIndex = 0;
+
+            }
+
+        }
 
     }
 
-    typingText.textContent = roles[roleIndex];
+    setTimeout(typeEffect, deleting ? 60 : 100);
 
-}, 2500);
-// ==============================
-// PORTFOLIO SCRIPT - PART 3C
-// ==============================
+}
 
-// Loading Animation
+typeEffect();
+
+// ===============================
+// Loading Screen
+// ===============================
+
 window.addEventListener("load", () => {
-    document.body.classList.add("loaded");
+
+    const loader = document.querySelector(".loader");
+
+    if (loader) {
+
+        loader.style.opacity = "0";
+
+        loader.style.visibility = "hidden";
+
+    }
+
 });
 
-// Contact Form Validation
-const contactForm = document.querySelector(".contact form");
+// ===============================
+// Image Hover Animation
+// ===============================
+
+const profileImage = document.querySelector(".home-image img");
+
+if (profileImage) {
+
+    profileImage.addEventListener("mouseenter", () => {
+
+        profileImage.style.transform = "scale(1.08)";
+
+    });
+
+    profileImage.addEventListener("mouseleave", () => {
+
+        profileImage.style.transform = "scale(1)";
+
+    });
+
+}
+/* ==========================================
+   PORTFOLIO V3
+   script.js
+   Part 3C (FINAL)
+========================================== */
+
+// ===============================
+// Contact Form Success
+// ===============================
+
+const contactForm = document.querySelector("#contact-form");
 
 if (contactForm) {
 
-    contactForm.addEventListener("submit", function (e) {
+    contactForm.addEventListener("submit", () => {
 
-        // e.preventDefault();
+        const submitBtn = contactForm.querySelector("button");
 
-        const name = this.querySelector('input[type="text"]').value.trim();
-        const email = this.querySelector('input[type="email"]').value.trim();
-        const message = this.querySelector("textarea").value.trim();
+        if (submitBtn) {
 
-        if (name === "" || email === "" || message === "") {
-            alert("Please fill in all required fields.");
-            return;
+            submitBtn.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+
+            submitBtn.disabled = true;
+
         }
-
-        const emailPattern =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!emailPattern.test(email)) {
-            alert("Please enter a valid email address.");
-            return;
-        }
-
-        alert("✅ Thank you! Your message has been submitted.");
-
-        this.reset();
 
     });
 
 }
 
+// ===============================
+// Button Ripple Effect
+// ===============================
 
-// Project Card Hover Animation
-const projectCards = document.querySelectorAll(".project-card");
+document.querySelectorAll(".btn").forEach(button => {
 
-projectCards.forEach(card => {
+    button.addEventListener("click", function (e) {
 
-    card.addEventListener("mouseenter", () => {
-        card.style.transform = "translateY(-10px) scale(1.02)";
-    });
+        const circle = document.createElement("span");
 
-    card.addEventListener("mouseleave", () => {
-        card.style.transform = "translateY(0) scale(1)";
+        const diameter = Math.max(this.clientWidth, this.clientHeight);
+
+        const radius = diameter / 2;
+
+        circle.style.width = circle.style.height = `${diameter}px`;
+
+        circle.style.left = `${e.clientX - this.offsetLeft - radius}px`;
+
+        circle.style.top = `${e.clientY - this.offsetTop - radius}px`;
+
+        circle.classList.add("ripple");
+
+        const ripple = this.getElementsByClassName("ripple")[0];
+
+        if (ripple) {
+
+            ripple.remove();
+
+        }
+
+        this.appendChild(circle);
+
     });
 
 });
 
+// ===============================
+// Console Message
+// ===============================
 
-// Smooth Image Hover
-const images = document.querySelectorAll("img");
+console.log(
+"%cPortfolio Developed by Dhiraj Kute 🚀",
+"color:#00abf0;font-size:18px;font-weight:bold;"
+);
 
-images.forEach(image => {
+// ===============================
+// Current Year
+// ===============================
 
-    image.addEventListener("mouseenter", () => {
-        image.style.transition = "0.4s";
-        image.style.transform = "scale(1.03)";
-    });
+const year = document.querySelector("#year");
 
-    image.addEventListener("mouseleave", () => {
-        image.style.transform = "scale(1)";
-    });
+if (year) {
 
-});
+    year.textContent = new Date().getFullYear();
 
-
-// Footer Year Auto Update
-const footerText = document.querySelector("footer p");
-
-if (footerText) {
-    const year = new Date().getFullYear();
-    footerText.innerHTML = `© ${year} Dhiraj Kute | All Rights Reserved.`;
 }
 
-console.log("🚀 Portfolio Loaded Successfully!");
+// ===============================
+// Disable Right Click (Optional)
+// ===============================
+
+// document.addEventListener("contextmenu", e => e.preventDefault());
+
+// ===============================
+// Portfolio Ready
+// ===============================
+
+window.addEventListener("load", () => {
+
+    console.log("Portfolio V3 Loaded Successfully ✅");
+
+});
